@@ -96,17 +96,6 @@ async def mainFunc(call: types.CallbackQuery):
 
 
 
-################################## STATE - записатся на Курсы
-
-
-
-@dp.callback_query_handler(text = "kursgaYozilish")
-async def mainFunc(call: types.CallbackQuery):
-    await call.message.answer(mainMenuInfo[call.data])
-    await call.message.delete()
-
-
-
 ################################## Отправка локацияи Чилазар
 
 
@@ -126,6 +115,62 @@ async def locFunc(call: types.CallbackQuery):
 async def locFunc(call: types.CallbackQuery):
     await bot.send_location(call.message.chat.id, CenterLoc[call.data][0], CenterLoc["chilonzorF"][1], reply_markup = InlineKeyboardMarkup().add(InlineKeyboardButton(text = "Ortga", callback_data = "backLOC")))
     await call.message.delete()
+
+
+
+################################## STATE начало
+
+
+
+@dp.callback_query_handler(text = "kursgaYozilish")
+async def locFunc(call: types.CallbackQuery, state: FSMContext):
+    await call.message.answer("Ismingizni kiriting!")
+    await User.name.set()
+
+
+
+##################################
+
+
+
+@dp.callback_query_handler(state = User.name)
+async def locFunc(call: types.CallbackQuery, state: FSMContext):
+
+    nameUser = call.message.text
+    await state.update_data(name = nameUser)
+
+    await call.message.answer("Yoshingizni kiriting!")
+    await User.age.set()
+
+
+
+##################################
+
+
+
+@dp.callback_query_handler(state = User.age)
+async def locFunc(call: types.CallbackQuery, state: FSMContext):
+
+    ageUser = call.message.text
+    await state.update_data(age = ageUser)
+
+    await call.message.answer("Kursni tanglang!", reply_markup = await coursesFUNC())
+    await User.course.set()
+
+
+
+##################################
+
+
+
+@dp.callback_query_handler(state = User.course)
+async def locFunc(call: types.CallbackQuery, state: FSMContext):
+
+    courseUser = call.message.text
+    await state.update_data(course = courseUser)
+
+    await call.message.answer("Kursni tanglang!")
+    await User.course.set()
 
 
 

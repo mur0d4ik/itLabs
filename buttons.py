@@ -15,6 +15,10 @@ mainMenu = {
 
 
 
+##################################
+
+
+
 mainMenuInfo = {
 
     "oquvMarkaz" : "Bizning fillialarimiz!",
@@ -24,6 +28,9 @@ mainMenuInfo = {
 
 }
 
+
+
+##################################
 
 
 
@@ -36,6 +43,10 @@ Center = {
 
 
 
+##################################
+
+
+
 async def locFUNC():
     buttons = InlineKeyboardMarkup()
 
@@ -43,6 +54,11 @@ async def locFUNC():
         buttons.add(InlineKeyboardButton(text = key, callback_data = value))
 
     return buttons
+
+
+
+##################################
+
 
 
 CenterLoc = {
@@ -53,6 +69,8 @@ CenterLoc = {
 }
 
 
+
+##################################
 
 
 
@@ -70,6 +88,10 @@ Courses = {
 
 
 
+##################################
+
+
+
 async def CoursesFUNC():
 
     buttons = InlineKeyboardMarkup()
@@ -78,6 +100,10 @@ async def CoursesFUNC():
         buttons.add(InlineKeyboardButton(text = key, callback_data = value))
 
     return buttons
+
+
+
+##################################
 
 
 
@@ -226,10 +252,15 @@ Kursda nimalarni o'rganasiz?:
 
 
 
+##################################
+
+
+
 coursesInfoButton = InlineKeyboardMarkup().add(InlineKeyboardButton(text = "⬅️Ortga", callback_data = "coursesBack"))
 
 
 
+##################################
 
 
 
@@ -243,9 +274,23 @@ async def menuFunc():
     return mainMenuButtons
 
 
+
 ###############################################################################
 
 
+
+coursesState = ["📱Flutter", "🐍Python", "🖥Fronted", "🎯SMM", "👨‍🎨Design"]
+
+
+
+async def coursesFUNC():
+
+    buttons = ReplyKeyboardMarkup(resize_keyboard = True)
+
+    for i in coursesState:
+        buttons.add(text = i)
+
+    return buttons
 
 
 
