@@ -6,3 +6,4 @@ class User(StatesGroup):
     age = State()
     course = State()
     phone_number = State()
+    choose = State()

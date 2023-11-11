@@ -256,7 +256,7 @@ Kursda nimalarni o'rganasiz?:
 
 
 
-coursesInfoButton = InlineKeyboardMarkup().add(InlineKeyboardButton(text = "⬅️Ortga", callback_data = "coursesBack"))
+coursesInfoButton = InlineKeyboardMarkup().add(InlineKeyboardButton(text = "📝Kursga yozilish", callback_data = "kursgaYozilish")).add(InlineKeyboardButton(text = "⬅️Ortga", callback_data = "coursesBack"))
 
 
 
@@ -288,7 +288,7 @@ async def coursesFUNC():
     buttons = ReplyKeyboardMarkup(resize_keyboard = True)
 
     for i in coursesState:
-        buttons.add(text = i)
+        buttons.add(KeyboardButton(text = i))
 
     return buttons
 
@@ -298,6 +298,25 @@ async def coursesFUNC():
 
 
 
+contact = ReplyKeyboardMarkup(resize_keyboard = True).add(KeyboardButton(text = "Telefon raqam", request_contact = True))
+
 
 
 ###############################################################################
+
+
+
+chooseList = {
+
+    "✅Xa" : "true",
+    "❌Yo'q" : "false"
+
+    }
+
+async def ChooseFUNC():
+    buttons = InlineKeyboardMarkup()
+
+    for key, value in chooseList.items():
+        buttons.insert(InlineKeyboardButton(text = key, callback_data = value))
+
+    return buttons

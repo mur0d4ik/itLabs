@@ -133,13 +133,13 @@ async def locFunc(call: types.CallbackQuery, state: FSMContext):
 
 
 
-@dp.callback_query_handler(state = User.name)
-async def locFunc(call: types.CallbackQuery, state: FSMContext):
+@dp.message_handler(state = User.name)
+async def locFunc(message: types.Message, state: FSMContext):
 
-    nameUser = call.message.text
+    nameUser = message.text
     await state.update_data(name = nameUser)
 
-    await call.message.answer("Yoshingizni kiriting!")
+    await message.answer("Yoshingizni kiriting!")
     await User.age.set()
 
 
@@ -148,14 +148,19 @@ async def locFunc(call: types.CallbackQuery, state: FSMContext):
 
 
 
-@dp.callback_query_handler(state = User.age)
-async def locFunc(call: types.CallbackQuery, state: FSMContext):
+@dp.message_handler(state = User.age)
+async def locFunc(message: types.Message, state: FSMContext):
 
-    ageUser = call.message.text
-    await state.update_data(age = ageUser)
+    ageUser = message.text
 
-    await call.message.answer("Kursni tanglang!", reply_markup = await coursesFUNC())
-    await User.course.set()
+    if ageUser.isdigit():
+        await state.update_data(age = ageUser)
+
+        await message.answer("Kursni tanglang!", reply_markup = await coursesFUNC())
+        await User.course.set()
+
+    else:
+        await message.answer("❌Yoshingizni sonlarda kiriting!")
 
 
 
@@ -163,14 +168,91 @@ async def locFunc(call: types.CallbackQuery, state: FSMContext):
 
 
 
-@dp.callback_query_handler(state = User.course)
-async def locFunc(call: types.CallbackQuery, state: FSMContext):
+@dp.message_handler(state = User.course)
+async def locFunc(message: types.Message, state: FSMContext):
 
-    courseUser = call.message.text
+    courseUser = message.text
     await state.update_data(course = courseUser)
+     
+    await message.answer("Nomeringizni yuboring!", reply_markup = contact)
+    await User.phone_number.set()
 
-    await call.message.answer("Kursni tanglang!")
-    await User.course.set()
+
+
+##################################
+
+
+
+@dp.message_handler(content_types = "contact" ,state = User.phone_number)
+async def locFunc(message: types.Message, state: FSMContext):
+        
+        phoneNumber = message.contact['phone_number']
+        await state.update_data(phone_number = phoneNumber)
+
+        await message.answer("...", reply_markup = types.ReplyKeyboardRemove())
+        
+        data = await state.get_data()
+        Name = data.get("name")
+        Age = data.get("age")
+        Course = data.get("course")
+        PhoneNumber = data.get("phone_number")
+
+        
+        info = f"""☑️ Sizning ma'lumotlaringiz!
+
+📄 F.I.O: - {Name}
+👤 Yosh: {Age}
+🖥 Kurs: {Course}
+📞 Telefon: {PhoneNumber}
+
+⚠️ Ma'lumotlaringiz to'g'rimi?"""
+        
+        await message.answer_photo(
+            photo = open("img/userInfo.jpg", "rb"),
+            caption = info, reply_markup = await ChooseFUNC()
+            )
+        
+        await User.choose.set()
+
+
+
+@dp.callback_query_handler(text = "true", state = User.choose)
+async def choose(call: types.CallbackQuery, state: FSMContext):
+
+    ChooseUser = call.data
+    await state.update_data(choose = ChooseUser)
+
+    data = await state.get_data()
+    Name = data.get("name")
+    Age = data.get("age")
+    Course = data.get("course")
+    PhoneNumber = data.get("phone_number")
+    
+    Info = f"""✅ Quyidagi ma'lumotlar qabul qilindi!
+
+📄 F.I.O: - {Name}
+👤 Yosh: {Age}
+🖥 Kurs: {Course}
+📞 Telefon: {PhoneNumber}"""
+
+    await bot.send_message(chat_id = 809673082, text = Info)
+    await call.message.delete()
+
+    await User.choose.set()
+
+
+
+@dp.callback_query_handler(text = "false", state = User.choose)
+async def choose(call: types.CallbackQuery, state: FSMContext):
+    await call.message.delete()
+
+    ChooseUser = call.data
+    await state.update_data(choose = ChooseUser)
+
+    await state.finish()
+    await state.reset_data()
+
+    await call.message.answer("Ma'lumotlaringiz o'chirildi🔥", reply_markup = await menuFunc())
 
 
 
